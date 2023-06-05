@@ -17,11 +17,11 @@ use App\Http\Controllers\Admin\DashboardController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::middleware('auth', 'verified')->name('admin.')->prefix('admin')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashbosrd');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 // Route::get('/dashboard', function () {
