@@ -1,8 +1,18 @@
 @extends('layouts.admin')
 
 @section('content')
-    <h1>Project List</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Project Index</h1>
 
+        <a class="btn btn-success text-white" href="{{ route('admin.projects.create') }}">Add new project</a>
+
+    </div>
+
+    @if (session()->has('message'))
+        <div class="alert alert-success">
+            {{ session()->get('message') }}
+        </div>
+    @endif
     <table class="table table-striped">
         <thead>
             <tr>
@@ -18,12 +28,27 @@
                 <tr>
                     <th scope="row">{{ $project->id }}</th>
                     <td>{{ $project->title }}</td>
-                    <td><img src="{{ $project->image }}" alt="{{ $project->title }}"></td>
-                    <td>{{ $project->create_at }}</td>
-                    <td><i class="fa-solid fa-eye"></i><i class="fa-solid fa-pencil"></i><i class="fa-solid fa-trash"></i>
+                    <td><img class="img-thumbnail" style="width: 100px" src="{{ $project->image }}"
+                            alt="{{ $project->title }}"></td>
+                    <td>{{ $project->created_at }}</td>
+                    <td>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ route('admin.projects.show', $project->slug) }}"
+                                class="btn btn-primary text-white"><i class="fa-solid fa-eye"></i></a>
+                            <a href="{{ route('admin.projects.edit', $project->slug) }}"
+                                class="btn btn-warning text-white"><i class="fa-solid fa-pencil"></i></a>
+                            <form action="{{ route('admin.projects.destroy', $project->slug) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type='submit' class="delete-button btn btn-danger text-white"
+                                    data-item-title="{{ $project->title }}"> <i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+    {{ $projects->links('vendor.pagination.bootstrap-5') }}
+    @include('partials.modal-delete')
 @endsection
