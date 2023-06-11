@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Type;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -17,6 +20,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
+        $types = Type::all();
         $projects = Project::paginate(4);
         return view('admin.projects.index', compact('projects'));
     }
@@ -28,7 +32,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $types = Type::all();
+        return view('admin.projects.create', compact('types'));
     }
 
     /**
@@ -42,6 +47,11 @@ class ProjectController extends Controller
         $data = $request->validated();
         $slug = Str::slug($request->title, '-');
         $data['slug'] = $slug;
+        if ($request->hasFile('image')) {
+            $image_path = Storage::put('uploads', $request->image);
+            $data['image'] = asset('storage/' . $image_path);
+        }
+
 
         //se scrivo singoli dati sulla create.blade.php:
         // $project = new Project();
@@ -78,7 +88,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -92,8 +103,15 @@ class ProjectController extends Controller
         $data = $request->validated();
         $slug = Str::slug($request->title, '-');
         $data['slug'] = $slug;
+        if ($request->hasFile('image')) {
+            if ($project->image) {
+                Storage::delete($project->image);
+            }
+            $image_path = Storage::put('uploads', $request->image);
+            $data['image'] = asset('storage/' . $image_path);
+        }
         $project->update($data);
-        return redirect()->route('admin.project.show', $project->slug)->with('message', "Project is successfully updated");
+        return redirect()->route('admin.projects.show', $project->slug)->with('message', "Project is successfully updated");
     }
 
     /**
@@ -103,6 +121,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        if ($project->image) {
+            Storage::delete($project->image);
+        }
         $project->delete();
         return redirect()->route('admin.projects.index')->with('message', "$project->title successfully deleted!");
     }

@@ -50,6 +50,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/admin/projects') }}">{{ __('Projects') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/admin/types') }}">{{ __('Types') }}</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -91,7 +94,7 @@
             </div>
         </nav>
 
-        <main class="">
+        <main class="container">
             @yield('content')
         </main>
     </div>
