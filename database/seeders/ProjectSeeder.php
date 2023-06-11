@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Project;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class ProjectSeeder extends Seeder
 {
@@ -16,11 +17,15 @@ class ProjectSeeder extends Seeder
      */
     public function run()
     {
-        $projects = ['HTML & CSS', 'JS', 'Vue&Vite', 'PHP', 'Laravel',];
-        foreach ($projects as $project) {
+        $faker = Faker::create();
+
+        for ($i = 0; $i < 10; $i++) {
             $newProject = new Project();
-            $newProject->name = $project;
-            $newProject->slug = Str::slug($project, ' ');
+            $titleWords = $faker->words($nb = 4, $asText = true);
+            $newProject->title = $titleWords;
+            $newProject->image = $faker->imageUrl($width = 640, $height = 480);
+            $newProject->description = $faker->paragraph;
+            $newProject->slug = Str::slug($newProject->title, '-');
             $newProject->save();
         }
     }
