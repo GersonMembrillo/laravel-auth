@@ -3,11 +3,8 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Project Index</h1>
-
         <a class="btn btn-success text-white" href="{{ route('admin.projects.create') }}">Add new project</a>
-
     </div>
-
     @if (session()->has('message'))
         <div class="alert alert-success">
             {{ session()->get('message') }}

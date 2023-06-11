@@ -3,6 +3,15 @@
 @section('content')
     <h1>Add Project</h1>
 
+    {{-- @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)s
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif --}}
     <form action="{{ route('admin.projects.store') }}" method="POST">
         @csrf
         <div class="mb-3">
@@ -19,8 +28,8 @@
             </div>
             <div class="mb-3">
                 <label for="image">Image</label>
-                <input type="file" class="form-control @error('image') is-invalid @enderror" name="image"
-                    id="image">
+                <input type="url" class="form-control @error('image') is-invalid @enderror" name="image"
+                    id="image" maxlength="255">
                 @error('image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

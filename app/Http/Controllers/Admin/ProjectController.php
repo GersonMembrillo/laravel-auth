@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -38,7 +39,25 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $data = $request->validated();
+        $slug = Str::slug($request->title, '-');
+        $data['slug'] = $slug;
+
+        //se scrivo singoli dati sulla create.blade.php:
+        // $project = new Project();
+        // $project->title = $data['title'];
+        // $project->image = $data['image'];
+        // $project->description = $data['description'];
+        // $$project->save();
+
+        // se metti $fillable nel model (si usa se ci sono molti dati):
+        // $project->fill($data)
+        // $$project->save();
+
+        //metodo più pulito
+        $project = Project::create($data);
+
+        return redirect()->route('admin.projects.show', $project->slug);
     }
 
     /**
@@ -55,7 +74,7 @@ class ProjectController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
+     *
      */
     public function edit(Project $project)
     {
@@ -70,7 +89,11 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data = $request->validated();
+        $slug = Str::slug($request->title, '-');
+        $data['slug'] = $slug;
+        $project->update($data);
+        return redirect()->route('admin.project.show', $project->slug)->with('message', "Project is successfully updated");
     }
 
     /**
